@@ -1,37 +1,40 @@
 import { computed, readonly, Ref, ref } from "vue";
 
-export function atom<T>(value : T) {
+export function atom<T>(value: T) {
   return ref<T>(value);
 }
 
-
-export function useAtom<T extends any>(atom : T ) {
-    if (Object.keys(atom as object).includes("value")) {
-      return computed(() =>  (atom as Ref<T>).value);
-      } else {
-      return computed(() => readonly(atom as object));
-    }
+export function useAtom<T extends any>(atom: T) {
+  if (Object.keys(atom as Record<string,any>).includes("value")) {
+    return computed(() => (atom as Ref<T>).value);
+  } else {
+    return computed(() => readonly(atom as Record<string,any>));
+  }
 }
 
+type SetCallback<A, B> = (set: A, get: B) => void;
+type GetCallback<A,B> = (atom: A) => B;
 
-type SetCallback<A> = ( set : Ref<A>, get : A ) => void
-type GetCallback<T> = (atom : Ref<T>) => void
-
-export function updateAtom<T,A,C>(callbackSet : ( set : SetCallback<A>, get : GetCallback<C>, payload : T ) => void) {
-  return (payload : T) => {
-    
-    const setCallback: SetCallback<A> =  (setValue,getValue) => {
+export function updateAtom<C extends any = any,A = {},B = {}>(
+  setCallbackResult:(
+    set: SetCallback<Ref<A>, B>,
+    get: GetCallback<Ref<B>,any>,
+    payload: C
+  ) => void
+) {
+  return (payload: C) => {
+    const setCallback: SetCallback<Ref<A>, any> = (setValue, getValue) => {
       if (typeof getValue === "function") {
         setValue.value = getValue(setValue.value);
       } else {
         setValue.value = getValue;
       }
-    }
+    };
 
-    const getCallback = (atom : Ref<C>) => {
+    const getCallback = (atom: any) => {
       return atom.value;
-    }
+    };
 
-    callbackSet(setCallback,getCallback, payload);
+    setCallbackResult(setCallback, getCallback, payload);
   };
 }
