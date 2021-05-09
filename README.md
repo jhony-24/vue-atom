@@ -1,24 +1,25 @@
 # vue-atom
 
-## Project setup
-```
-npm install
+### Creating stores
+
+```javascript
+import { atom } from "vue-atom";
+
+const username = atom("jhon");
+const posts = atom([]);
+
 ```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+### Updating the stores
 
-### Compiles and minifies for production
-```
-npm run build
-```
+```javascript
+import { atom  } from "vue-atom";
 
-### Lints and fixes files
-```
-npm run lint
-```
+const changeUsername = atom((set, _get, payload) => {
+  set(username, payload);
+});
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+const addPosts = atom((set, get, payload) => {
+  set(posts, [...get(posts), payload]);
+});
+```
