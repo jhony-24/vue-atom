@@ -7,10 +7,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, Ref } from "vue";
+import { defineComponent } from "vue";
 import { atom, useAtom, useActions } from "./vue-atom";
 
-const counter: Ref<number> = atom(1);
+const counter = atom(1);
 
 const increment = atom((set, get, payload) => {
   set(counter, get(counter) + payload);

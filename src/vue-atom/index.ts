@@ -1,19 +1,9 @@
 import { computed, readonly, Ref, ref } from "vue";
+import { SetCallback, SetCallbackConstructor, RefAtom,RefListObject,RefAtomAction } from "./types"
 
-type SetCallback<SetValue extends Ref, GetValue> = (set: SetValue, get: GetValue) => void;
-
-type GetCallback<SetRefValue extends Ref, GetValue> = (atom: SetRefValue) => GetValue;
-
-type SetCallbackConstructor<PayloadValue, Set extends Ref,Get extends Ref> = (
-  set: SetCallback<Set, Set["value"]>,
-  get: GetCallback<Get, Get["value"]>,
-  payload: PayloadValue
-) => void;
-
-type RefAtom<T> = Ref<T>;
-type RefListObject<T> = { [key in keyof T] : T[key] }
-type RefAtomAction<Payload> = () => (payload: Payload) => void;
-
+/**
+ * Get a only atom or a list atoms as object 
+ */
 export function useAtom<T extends any>(atom: T) {
   if (Object.keys(atom as object).includes("value")) {
     return computed(() => (atom as RefAtom<T>).value);
@@ -22,16 +12,22 @@ export function useAtom<T extends any>(atom: T) {
   }
 }
 
+/**
+ * Return a selector of multiple atoms
+ */
 export function selector<AtomValue>(callback: () => AtomValue) {
   return computed<AtomValue>(() => callback());
 }
 
-export function atom<AtomValue, RefAtom extends Ref = any>(
-  value: SetCallbackConstructor<AtomValue, RefAtom,RefAtom["value"]> | AtomValue
+/**
+ * Create an atom or action
+ */
+export function atom<AtomValue, SetAtom extends Ref = any,GetAtom extends Ref = any>(
+  value: SetCallbackConstructor<AtomValue, SetAtom,GetAtom> | AtomValue
 ) : any {
   if (typeof value === "function") {
     const atomConstructor = () => {
-      const setCallback: SetCallback<RefAtom,RefAtom["value"]> = (setValue, getValue) => {
+      const setCallback: SetCallback<SetAtom,GetAtom["value"]> = (setValue, getValue) => {
         if (typeof getValue === "function") {
           setValue.value = getValue(setValue.value);
         } else {
@@ -39,7 +35,7 @@ export function atom<AtomValue, RefAtom extends Ref = any>(
         }
       };
 
-      const getCallback = (atom: RefAtom) => {
+      const getCallback = (atom: GetAtom["value"]) => {
         return atom.value;
       };
 
@@ -52,8 +48,11 @@ export function atom<AtomValue, RefAtom extends Ref = any>(
   return ref<AtomValue>(value);
 }
 
+/**
+ * Get actions created with the atom utility
+ */
 export function useActions<T, K extends keyof T>(atomActions: Record<K, () => T[K]>) {
-  const makeAtoms : any = {};
+  const makeAtoms : Record<K,any>  = Object.create({});
   for (const i in atomActions) {
     makeAtoms[i] = atomActions[i]();
   }
