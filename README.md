@@ -11,6 +11,14 @@ const usernameAtom = atom("jhon");
 const postsAtom = atom([]);
 ```
 
+### Writing getters
+
+```javascript
+import { selector } from "vue-atom";
+
+const usernameModified = selector(get => get(usernameAtom).toUpperCase());
+```
+
 ### Updating the stores
 
 ```javascript
@@ -34,7 +42,7 @@ const getPosts = atom(async (set) => {
 ```vue
 <template>
   <section>
-    <h1>{{ username }}</h1>
+    <h1>{{ username }} - {{ usernameUppercase }}</h1>
     <button @click="actions.changeUsername('marcos')">Change username</button>
   </section>
 </template>
@@ -45,10 +53,12 @@ import { useAtoms, useActions } from "vue-atom";
 export default {
   setup() {
     const usernaame = useAtoms(usernameAtom);
+    const usernameUppercase = useAtoms(usernameModified);
     const actions = useActions({ changeUsername });
 
     return {
       username,
+      usernameUppercase,
       actions,
     };
   },
