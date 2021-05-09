@@ -1,19 +1,20 @@
 <template>
   <div>
-    {{ store.counter }}
-    <button @click="actions.increment(5)">change counter with inc</button>
+    {{ store.counter }} - {{ store.doubleCounter }}
+    <button @click="actions.increment">change counter with inc</button>
     <button @click="actions.decrement">change counter with dec</button>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { atom, useAtom, useActions } from "./vue-atom";
+import { atom, useAtom, useActions, selector } from "./vue-atom";
 
 const counter = atom(1);
+const doubleCounter = selector((get) => get(counter) + get(counter));
 
-const increment = atom((set, get, payload) => {
-  set(counter, get(counter) + payload);
+const increment = atom((set, get) => {
+  set(counter, get(counter) + 1);
 });
 
 const decrement = atom((set, get) => {
@@ -22,7 +23,7 @@ const decrement = atom((set, get) => {
 
 export default defineComponent({
   setup() {
-    const store = useAtom({ counter });
+    const store = useAtom({ counter, doubleCounter });
 
     const actions = useActions({ increment, decrement });
 

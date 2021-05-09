@@ -1,5 +1,7 @@
 # vue-atom
 
+State management based in atoms to **Vue 3**.
+
 ### Creating stores
 
 ```javascript
