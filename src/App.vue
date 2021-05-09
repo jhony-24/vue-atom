@@ -9,12 +9,16 @@
 import { defineComponent } from "vue";
 import { atom, useAtom, useActions, selector } from "./vue-atom";
 
+// define initial stores and getterrs
 const username = atom("");
 const usernameUppercase = selector((get) => get(username).toUpperCase());
 
+// creating actions
 const updateUsername = atom((set, _get, payload) => {
   set(username, payload);
 });
+
+// using store and actions
 
 export default defineComponent({
   setup() {

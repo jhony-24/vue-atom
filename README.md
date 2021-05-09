@@ -38,6 +38,7 @@ const getPosts = atom(async (set) => {
 ```
 
 ### Using in vue components
+To use a store o selector use **useAtoms()**, for actions use **useActions()**.
 
 ```vue
 <template>
@@ -59,6 +60,33 @@ export default {
     return {
       username,
       usernameUppercase,
+      actions,
+    };
+  },
+};
+</script>
+```
+
+If you want to use multiple stores or selectors with a one useAtoms hooks you can pass how object
+
+```vue
+<template>
+  <section>
+    <h1>{{ state.username }} - {{ state.uppercase }}</h1>
+    <button @click="actions.changeUsername('marcos')">Change username</button>
+  </section>
+</template>
+
+<script>
+import { useAtoms, useActions } from "vue-atom";
+
+export default {
+  setup() {
+    const state = useAtoms({ username : usernameAtom, uppercase : usernameModified });
+    const actions = useActions({ changeUsername });
+
+    return {
+      state,
       actions,
     };
   },
