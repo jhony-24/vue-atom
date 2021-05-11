@@ -44,7 +44,9 @@ To use a store o selector use **useAtoms()**, for actions use **useActions()**.
 <template>
   <section>
     <h1>{{ username }} - {{ usernameUppercase }}</h1>
-    <button @click="actions.changeUsername('marcos')">Change username</button>
+    <button @click="actions.changeUsername('marcos')">
+      Change username
+    </button>
   </section>
 </template>
 
@@ -73,7 +75,9 @@ If you want to use multiple stores or selectors with a one useAtoms hooks you ca
 <template>
   <section>
     <h1>{{ state.username }} - {{ state.uppercase }}</h1>
-    <button @click="actions.changeUsername('marcos')">Change username</button>
+    <button @click="actions.changeUsername('marcos')">
+      Change username
+    </button>
   </section>
 </template>
 
@@ -82,7 +86,10 @@ import { useAtoms, useActions } from "vue-atom";
 
 export default {
   setup() {
-    const state = useAtoms({ username : usernameAtom, uppercase : usernameModified });
+    const state = useAtoms({ 
+      username : usernameAtom, 
+      uppercase : usernameModified 
+    });
     const actions = useActions({ changeUsername });
 
     return {

@@ -6,7 +6,7 @@ import {
   RefAtomAction,
   CallbackSelector,
 } from "./types";
-import { computed, readonly, Ref, ref } from "vue";
+import { computed, readonly, Ref, ref, watch } from "vue";
 
 /**
  * Get a only atom or a list atoms as object
@@ -22,11 +22,9 @@ export function useAtom<T extends any>(atom: T) {
 /**
  * Return a selector of multiple atoms
  */
-export function selector<
-  AtomValue,
-  GetValue = any,
-  GetAtom = any
->(callback: CallbackSelector<GetAtom, GetValue, AtomValue>) {
+export function selector<AtomValue, GetValue = any, GetAtom = any>(
+  callback: CallbackSelector<GetAtom, GetValue, AtomValue>
+) {
   return computed<AtomValue>(() =>
     callback((argsAtom: RefAtom<any>) => argsAtom.value)
   );
@@ -77,4 +75,13 @@ export function useActions<T, K extends keyof T>(
     makeAtoms[i] = atomActions[i]();
   }
   return makeAtoms;
+}
+
+export function subscribe<T>(
+  atom: RefAtom<T>,
+  callbackSubscriber: (arg: T) => void
+) {
+  watch(atom, (value) => {
+    callbackSubscriber(value)
+  });
 }
