@@ -2,7 +2,9 @@
 
 State management based in atoms to **Vue 3**.
 
-### Creating stores
+### Using store atoms
+
+#### Creating stores
 
 ```javascript
 import { atom } from "vue-atom";
@@ -11,7 +13,7 @@ const usernameAtom = atom("jhon");
 const postsAtom = atom([]);
 ```
 
-### Writing getters
+#### Writing getters
 
 ```javascript
 import { selector } from "vue-atom";
@@ -19,7 +21,7 @@ import { selector } from "vue-atom";
 const usernameModified = selector(get => get(usernameAtom).toUpperCase());
 ```
 
-### Updating the stores
+#### Updating the stores
 To update an atom we use a callback method instead of a value
 
 ```javascript
@@ -38,7 +40,7 @@ const getPosts = atom(async (set) => {
 });
 ```
 
-### Listening when the atom is updated
+#### Listening when the atom is updated
 You can use the `.subscribe` method of atom to listen all changes
 ```javascript
 usernameAtom.subscribe(value => {
@@ -46,7 +48,7 @@ usernameAtom.subscribe(value => {
 })
 ```
 
-### Using in vue components
+#### Using in vue components
 To use a store o selector use **useAtoms()**, for actions use **useActions()**.
 
 ```vue
@@ -109,3 +111,23 @@ export default {
 };
 </script>
 ```
+
+
+### API
+
+#### `atom()`
+
+Initialize a store with value or create an action. 
+
+#### `selector()`
+
+Get a new value of atoms.
+
+#### `useAtom()`
+
+Get a object of atoms.
+
+
+#### `useAction()`
+
+Get multiple actions or one action.

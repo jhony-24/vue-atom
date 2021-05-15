@@ -37,12 +37,12 @@ export function atom<T extends any>(
   };
 }
 
-export function selector<T>(get : AtomGetter<T>) {
+export function selector<T>(get: AtomGetter<T>) {
   const selectorAtom = {
-    atom : {
-      value :  computed(() =>get(e => e.atom.value))
-    }
-  }
+    atom: {
+      value: computed(() => get((e) => e.atom.value)),
+    },
+  };
   return selectorAtom;
 }
 
