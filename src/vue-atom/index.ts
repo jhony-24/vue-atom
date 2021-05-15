@@ -19,6 +19,16 @@ export function useAtom<T extends any>(atom: T) {
   }
 }
 
+export function subscribe<T>(
+  atom: RefAtom<T>,
+  callbackSubscriber: (arg: T) => void
+) {
+  watch(atom, (value) => {
+    callbackSubscriber(value)
+  });
+}
+
+
 /**
  * Return a selector of multiple atoms
  */
@@ -75,13 +85,4 @@ export function useActions<T, K extends keyof T>(
     makeAtoms[i] = atomActions[i]();
   }
   return makeAtoms;
-}
-
-export function subscribe<T>(
-  atom: RefAtom<T>,
-  callbackSubscriber: (arg: T) => void
-) {
-  watch(atom, (value) => {
-    callbackSubscriber(value)
-  });
 }
