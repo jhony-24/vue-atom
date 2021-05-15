@@ -1,26 +1,43 @@
 <template>
   <div>
-    {{ counter }}
+    <h1>normal {{ counter }}</h1>
+    <h1>duplicate {{ duplicate }}</h1>
     <button @click="update">increment</button>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { atom, useAtom, useAction } from "./vue-atom";
+import { atom, useAtom, useAction, selector } from "./vue-atom";
 
-const counterAtom = atom(1);
-const updateCounterA = atom((set, get) => {
-  set(counterAtom, get(counterAtom) + get(counterAtom));
-});
+function defineCounterModel() {
+  const counter = atom(1);
+  const duplicate = selector((get) => get(counter) + get(counter));
 
-export default defineComponent({
-  setup() {
-    const { counter } = useAtom({ counter: counterAtom });
+  const updateCounterA = atom((set, get) => {
+    set(counter, get(counter) + get(counter));
+  });
+
+  return () => {
+    const store = useAtom({ counter, duplicate });
     const update = useAction(updateCounterA);
 
     return {
+      counter: store.counter,
+      duplicate: store.duplicate,
+      update,
+    };
+  };
+}
+
+const counterModel = defineCounterModel();
+
+export default defineComponent({
+  setup() {
+    const { counter, duplicate, update } = counterModel();
+    return {
       counter,
+      duplicate,
       update,
     };
   },
