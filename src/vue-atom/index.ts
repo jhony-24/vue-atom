@@ -9,11 +9,11 @@ import {
   ListHandlerValues,
   SetAtom,
 } from "./types";
-import { haveProperty, setAtom } from "./utils";
+import { getAtom, haveProperty, setAtom } from "./utils";
 
 
 
-export function atom<T>(value: T | ((set : typeof setAtom,payload: T) => void)): AtomReturn<T> {
+export function atom<T>(value: T | ((set : typeof setAtom,get : typeof getAtom,payload: T) => void)): AtomReturn<T> {
   const atomValue = reactive({
     value,
   });
@@ -31,7 +31,7 @@ export function atom<T>(value: T | ((set : typeof setAtom,payload: T) => void)):
       );
     },
     handler: (payload?: T) => {
-      typeof value === "function" && (value as any)(setAtom,payload);
+      typeof value === "function" && (value as any)(setAtom,getAtom,payload);
     },
   };
 }

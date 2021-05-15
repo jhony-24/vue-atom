@@ -10,7 +10,8 @@ import { defineComponent } from "vue";
 import { atom, useAtom, useAction } from "./vue-atom";
 
 const counterAtom = atom(0);
-const updateCounterA = atom<number>((set, payload) => {
+const updateCounterA = atom<number>((set, get, payload) => {
+  console.log(get(counterAtom));
   set(counterAtom, payload);
 });
 
