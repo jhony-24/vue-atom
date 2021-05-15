@@ -20,6 +20,7 @@ const usernameModified = selector(get => get(usernameAtom).toUpperCase());
 ```
 
 ### Updating the stores
+To update an atom we use a callback method instead of a value
 
 ```javascript
 import { atom } from "vue-atom";
@@ -59,13 +60,13 @@ To use a store o selector use **useAtoms()**, for actions use **useActions()**.
 </template>
 
 <script>
-import { useAtoms, useActions } from "vue-atom";
+import { useAtom, useAction } from "vue-atom";
 
 export default {
   setup() {
-    const usernaame = useAtoms(usernameAtom);
-    const usernameUppercase = useAtoms(usernameModified);
-    const actions = useActions({ changeUsername });
+    const usernaame = useAtom(usernameAtom);
+    const usernameUppercase = useAtom(usernameModified);
+    const actions = useAction({ changeUsername });
 
     return {
       username,
@@ -90,15 +91,15 @@ If you want to use multiple stores or selectors with a one useAtoms hooks you ca
 </template>
 
 <script>
-import { useAtoms, useActions } from "vue-atom";
+import { useAtom, useAction } from "vue-atom";
 
 export default {
   setup() {
-    const state = useAtoms({ 
+    const state = useAtom({ 
       username : usernameAtom, 
       uppercase : usernameModified 
     });
-    const actions = useActions({ changeUsername });
+    const actions = useAction({ changeUsername });
 
     return {
       state,

@@ -32,7 +32,7 @@ export function atom<T>(value: T | ((args: T) => void)): AtomReturn<T> {
   };
 }
 
-export function useAtoms<T extends { [key in keyof T]: T[key] }>(stores: T) {
+export function useAtom<T extends { [key in keyof T]: T[key] }>(stores: T) {
   const makeAtoms: Record<any, any> = Object.create({});
   for (const key in stores) {
     const atom = (stores[key] as GetAtomValue<any>).atom;
@@ -42,11 +42,14 @@ export function useAtoms<T extends { [key in keyof T]: T[key] }>(stores: T) {
   return makeAtoms as ListAtomValues<T>;
 }
 
-export function useActions<T extends { [key in keyof T]: T[key] }>(actions: T) {
-  const makeAtoms: Record<any, any> = Object.create({});
-  for (const key in actions) {
-    makeAtoms[key] = (actions[key] as GetHandlerValue<any>).handler;
+export function useAction<T>(actions: T) {
+  if ((actions as any).hasOwnProperty("handler")) {
+    return (actions as GetHandlerValue<any>).handler;
+  } else {
+    const makeAtoms: Record<any, any> = Object.create({});
+    for (const key in actions) {
+      makeAtoms[key] = (actions[key] as GetHandlerValue<any>).handler;
+    }
+    return makeAtoms as ListHandlerValues<T>;
   }
-
-  return makeAtoms as ListHandlerValues<T>;
 }
