@@ -1,14 +1,14 @@
 import { computed } from "@vue/runtime-core";
-import { AtomReturn } from "./types";
+import { GetAtom, SetAtom } from "./types";
 
 export function haveProperty<ObjectVal,PropVal>(obj : ObjectVal, prop : PropVal) : boolean {
-    return (obj as any).hasOwnProperty("handler");
+    return (obj as any).hasOwnProperty(prop);
 }
 
-export function setAtom<T extends AtomReturn<any>,V>(value : T, payload : V) {
+export const setAtom : SetAtom<any,any> = (value, payload )=>  {
     value.atom.value = payload;
 } 
 
-export function getAtom<T extends AtomReturn<any>>(value : T) {
+export const getAtom: GetAtom<any> = (value) => {
     return computed(() => value.atom.value).value;
 } 

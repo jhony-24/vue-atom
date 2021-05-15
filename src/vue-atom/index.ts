@@ -1,5 +1,6 @@
 import { computed, reactive, watch, toRefs, Ref, toRef } from "vue";
 import {
+  AtomCoreHandlerAction,
   AtomHandlerAction,
   AtomReturn,
   AtomValue,
@@ -13,7 +14,7 @@ import { getAtom, haveProperty, setAtom } from "./utils";
 
 
 
-export function atom<T>(value: T | ((set : typeof setAtom,get : typeof getAtom,payload: T) => void)): AtomReturn<T> {
+export function atom<T>(value: T | AtomCoreHandlerAction<T>): AtomReturn<T> {
   const atomValue = reactive({
     value,
   });
