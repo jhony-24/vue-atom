@@ -1,25 +1,31 @@
 <template>
   <div>
-    {{ store.counter.counterA }}
+    {{ counter }}
+    <button @click="actions.updateCounterA">increment</button>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { atomic, useAtom } from "./vue-atom/indexV2";
+import { atomic, useAtom, useActions } from "./vue-atom/indexV2";
+import { useTitle } from "@vueuse/core";
 
-const counter = atomic({
-  counterA: 0,
-  counterB: 10,
+const counterAtom = atomic(0);
+
+const updateCounterA = atomic(() => {
+  const title = useTitle();
+  title.value = "jhony";
+  counterAtom.atom.value = 27;
 });
 
 export default defineComponent({
   setup() {
-    const store = useAtom({ counter });
-    store.counter;
+    const { counter } = useAtom({ counter: counterAtom });
+    const actions = useActions({ updateCounterA });
 
     return {
-      store,
+      counter,
+      actions,
     };
   },
 });
