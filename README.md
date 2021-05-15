@@ -37,6 +37,14 @@ const getPosts = atom(async (set) => {
 });
 ```
 
+### Listening when the atom is updated
+You can use the `.subscribe` method of atom to listen all changes
+```javascript
+usernameAtom.subscribe(value => {
+  console.log(value)
+})
+```
+
 ### Using in vue components
 To use a store o selector use **useAtoms()**, for actions use **useActions()**.
 

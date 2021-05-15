@@ -32,7 +32,7 @@ export function atom<T>(value: T | ((args: T) => void)): AtomReturn<T> {
   };
 }
 
-export function useAtom<T extends { [key in keyof T]: T[key] }>(stores: T) {
+export function useAtoms<T extends { [key in keyof T]: T[key] }>(stores: T) {
   const makeAtoms: Record<any, any> = Object.create({});
   for (const key in stores) {
     const atom = (stores[key] as GetAtomValue<any>).atom;
