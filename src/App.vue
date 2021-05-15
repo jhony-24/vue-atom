@@ -1,6 +1,6 @@
 <template>
   <div>
-    {{ store }}
+    {{ store.counter.counterA }}
   </div>
 </template>
 

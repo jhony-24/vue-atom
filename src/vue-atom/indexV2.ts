@@ -3,10 +3,10 @@ import { reactive, watch } from "vue";
 export interface AtomicReturn<T> {
   atom: { value: T };
   subscribe: (callback: (args: T) => void, immediate?: boolean) => void;
-  handler: (payload ?: T) => void;
+  handler: (payload?: T) => void;
 }
 
-export function atomic<T>(value: T | ((args: T) => void)) : AtomicReturn<T> {
+export function atomic<T>(value: T | ((args: T) => void)): AtomicReturn<T> {
   const atomValue = reactive({
     value,
   });
@@ -29,8 +29,15 @@ export function atomic<T>(value: T | ((args: T) => void)) : AtomicReturn<T> {
   };
 }
 
-export function useAtom<T, K extends keyof T>(
-  stores: any
-) {
-  return stores;
+export type OnlyAtomicValue<T extends AtomicReturn<any>> = T["atom"]["value"];
+
+export function useAtom<
+  T extends { [key in keyof T]: T[K] },
+  K extends keyof T
+>(stores: T) {
+  const makeAtoms: Record<any, any> = Object.create({});
+  for (const key in stores) {
+    makeAtoms[key] = (stores[key] as OnlyAtomicValue<any>).atom.value;
+  }
+  return makeAtoms as { [key in K]: OnlyAtomicValue<T[key]> };
 }
