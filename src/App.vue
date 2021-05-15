@@ -7,12 +7,11 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { atomic, useAtom, useActions } from "./vue-atom/indexV2";
+import { atom, useAtom, useActions } from "./vue-atom";
 import { useTitle } from "@vueuse/core";
 
-const counterAtom = atomic(0);
-
-const updateCounterA = atomic(() => {
+const counterAtom = atom(0);
+const updateCounterA = atom(() => {
   const title = useTitle();
   title.value = "jhony";
   counterAtom.atom.value = 27;

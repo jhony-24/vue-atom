@@ -1,12 +1,12 @@
-import { computed, reactive, readonly, watch } from "vue";
+import { computed, reactive, watch } from "vue";
 
-export interface AtomicReturn<T> {
+export interface AtomReturn<T> {
   atom: { value: T };
   subscribe: (callback: (args: T) => void, immediate?: boolean) => void;
   handler: (payload?: T) => void;
 }
 
-export function atomic<T>(value: T | ((args: T) => void)): AtomicReturn<T> {
+export function atom<T>(value: T | ((args: T) => void)): AtomReturn<T> {
   const atomValue = reactive({
     value,
   });
@@ -29,8 +29,8 @@ export function atomic<T>(value: T | ((args: T) => void)): AtomicReturn<T> {
   };
 }
 
-export type OnlyAtomicValue<T extends AtomicReturn<any>> = T["atom"]["value"];
-export type OnlyHandlerValue<T extends AtomicReturn<any>> = T["handler"];
+export type OnlyAtomicValue<T extends AtomReturn<any>> = T["atom"]["value"];
+export type OnlyHandlerValue<T extends AtomReturn<any>> = T["handler"];
 
 export function useAtom<
   T extends { [key in keyof T]: T[K] },
