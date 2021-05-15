@@ -7,7 +7,12 @@ export type AtomSubscriber<T> = (
   immediate?: boolean
 ) => void;
 
+export type SetAtom<T extends AtomReturn<any>,V> = (value: T, payload : V) => void;
+
 export type AtomHandlerAction<T> = (payload?: T) => void;
+
+export type AtomCoreHandlerAction<T> = (set : SetAtom<any,T>,payload?: T) => void;
+
 
 export interface AtomReturn<T> {
   atom: AtomValue<T>;
