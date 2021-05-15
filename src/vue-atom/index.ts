@@ -1,20 +1,17 @@
-import { computed, reactive, watch, toRefs, Ref, toRef } from "vue";
+import { reactive, watch, toRefs } from "vue";
 import {
   AtomCoreHandlerAction,
-  AtomHandlerAction,
   AtomReturn,
   AtomValue,
   GetAtomValue,
   GetHandlerValue,
   ListAtomValues,
   ListHandlerValues,
-  SetAtom,
 } from "./types";
 import { getAtom, haveProperty, setAtom } from "./utils";
 
 
-
-export function atom<T>(value: T | AtomCoreHandlerAction<T>): AtomReturn<T> {
+export function atom<T extends any>(value: T | AtomCoreHandlerAction<T>): AtomReturn<T> {
   const atomValue = reactive({
     value,
   });
@@ -31,8 +28,8 @@ export function atom<T>(value: T | AtomCoreHandlerAction<T>): AtomReturn<T> {
         }
       );
     },
-    handler: (payload?: T) => {
-      typeof value === "function" && (value as any)(setAtom,getAtom,payload);
+    handler: (payload ?: T) => {
+      typeof value === "function" && (value as AtomCoreHandlerAction<T>)(setAtom,getAtom,payload);
     },
   };
 }

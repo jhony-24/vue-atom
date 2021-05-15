@@ -1,7 +1,7 @@
 <template>
   <div>
     {{ counter }}
-    <button @click="update(Math.random())">increment</button>
+    <button @click="update">increment</button>
   </div>
 </template>
 
@@ -9,10 +9,9 @@
 import { defineComponent } from "vue";
 import { atom, useAtom, useAction } from "./vue-atom";
 
-const counterAtom = atom(0);
-const updateCounterA = atom<number>((set, get, payload) => {
-  console.log(get(counterAtom));
-  set(counterAtom, payload);
+const counterAtom = atom(1);
+const updateCounterA = atom((set, get) => {
+  set(counterAtom, get(counterAtom) + get(counterAtom));
 });
 
 export default defineComponent({
