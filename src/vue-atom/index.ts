@@ -1,4 +1,4 @@
-import { computed, reactive, watch } from "vue";
+import { computed, reactive, watch, toRefs, Ref, toRef } from "vue";
 import {
   AtomHandlerAction,
   AtomReturn,
@@ -8,6 +8,7 @@ import {
   ListAtomValues,
   ListHandlerValues,
 } from "./types";
+import { haveProperty } from "./utils";
 
 export function atom<T>(value: T | ((args: T) => void)): AtomReturn<T> {
   const atomValue = reactive({
@@ -32,18 +33,18 @@ export function atom<T>(value: T | ((args: T) => void)): AtomReturn<T> {
   };
 }
 
-export function useAtom<T extends { [key in keyof T]: T[key] }>(stores: T) {
+export function useAtom<T extends any>(stores: T) {
   const makeAtoms: Record<any, any> = Object.create({});
   for (const key in stores) {
     const atom = (stores[key] as GetAtomValue<any>).atom;
     makeAtoms[key] =
-      typeof atom.value === "object" ? atom.value : computed(() => atom.value);
+      typeof atom.value === "object" ? atom.value : toRefs(atom).value;
   }
   return makeAtoms as ListAtomValues<T>;
 }
 
 export function useAction<T>(actions: T) {
-  if ((actions as any).hasOwnProperty("handler")) {
+  if (haveProperty(actions,"handler")) {
     return (actions as GetHandlerValue<any>).handler;
   } else {
     const makeAtoms: Record<any, any> = Object.create({});
