@@ -1,20 +1,36 @@
 import { reactive, watch } from "vue";
 
-export function atomic<T>(value: T | ((args: T) => void)) {
-    const atomValue = reactive({
-        value
-    });
+export interface AtomicReturn<T> {
+  atom: { value: T };
+  subscribe: (callback: (args: T) => void, immediate?: boolean) => void;
+  handler: (payload ?: T) => void;
+}
 
-    return {
-      atom: atomValue as { value : T },
-      subscribe(callback: (args: T) => void, immediate = false) {
-        watch(() => this.atom.value, (e) => callback(e as T), {
+export function atomic<T>(value: T | ((args: T) => void)) : AtomicReturn<T> {
+  const atomValue = reactive({
+    value,
+  });
+
+  return {
+    atom: atomValue as { value: T },
+    subscribe(callback: (args: T) => void, immediate = false) {
+      watch(
+        () => this.atom.value,
+        (e) => callback(e as T),
+        {
           immediate,
-          deep : true,
-        });
-      },
-      handler: (payload?: T) => {
-        typeof value === "function" && (value as any)(payload);
-      },
-    };
-  }
+          deep: true,
+        }
+      );
+    },
+    handler: (payload?: T) => {
+      typeof value === "function" && (value as any)(payload);
+    },
+  };
+}
+
+export function useAtom<T, K extends keyof T>(
+  stores: any
+) {
+  return stores;
+}
