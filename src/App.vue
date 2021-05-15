@@ -11,16 +11,17 @@ import { atom, useAtom, useActions } from "./vue-atom";
 import { useTitle } from "@vueuse/core";
 
 const counterAtom = atom(0);
-const updateCounterA = atom(() => {
+const updateCounterA = atom<number>((payload) => {
   const title = useTitle();
   title.value = "jhony";
-  counterAtom.atom.value = 27;
+  counterAtom.atom.value = payload;
 });
 
 export default defineComponent({
   setup() {
     const { counter } = useAtom({ counter: counterAtom });
     const actions = useActions({ updateCounterA });
+    actions.updateCounterA(3);
 
     return {
       counter,

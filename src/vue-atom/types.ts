@@ -1,32 +1,28 @@
-import { Ref } from "vue";
+export type AtomValue<T> = {
+  value: T;
+};
 
-export type SetCallback<SetValue extends Ref, GetValue> = (
-  set: SetValue,
-  get: GetValue
+export type AtomSubscriber<T> = (
+  callback: (args: T) => void,
+  immediate?: boolean
 ) => void;
 
-export type GetCallback<SetRefValue extends Ref, GetValue> = (
-  atom: SetRefValue
-) => GetValue;
+export type AtomHandlerAction<T> = (payload?: T) => void;
 
-export type SetCallbackConstructor<
-  PayloadValue,
-  Set extends Ref,
-  Get extends Ref
-> = (
-  set: SetCallback<Set, Set["value"]>,
-  get: GetCallback<Get, Get["value"]>,
-  payload: PayloadValue
-) => void;
+export interface AtomReturn<T> {
+  atom: AtomValue<T>;
+  subscribe: AtomSubscriber<T>;
+  handler: AtomHandlerAction<T>;
+}
 
-export type RefAtom<T> = Ref<T>;
+export type GetAtomValue<T extends AtomReturn<any>> = T["atom"]["value"];
 
-export type RefListObject<T> = { [key in keyof T]: T[key] };
+export type GetHandlerValue<T extends AtomReturn<any>> = T["handler"];
 
-export type RefAtomAction<Payload> = () => (payload: Payload) => void;
+export type ListAtomValues<
+  T extends { [key in keyof T]: T[key] },
+> = { [key in keyof T]: GetAtomValue<T[key]> };
 
-export type CallbackSelector<
-  GetAtom,
-  GetValue,
-  AtomValue
-> = (get: (argsAtom: RefAtom<GetValue>) => GetAtom) => AtomValue;
+export type ListHandlerValues<
+  T extends { [key in keyof T]: T[key] }
+> = { [key in keyof T]: GetHandlerValue<T[key]> };

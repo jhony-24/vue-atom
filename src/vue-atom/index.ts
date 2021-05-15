@@ -1,10 +1,13 @@
 import { computed, reactive, watch } from "vue";
-
-export interface AtomReturn<T> {
-  atom: { value: T };
-  subscribe: (callback: (args: T) => void, immediate?: boolean) => void;
-  handler: (payload?: T) => void;
-}
+import {
+  AtomHandlerAction,
+  AtomReturn,
+  AtomValue,
+  GetAtomValue,
+  GetHandlerValue,
+  ListAtomValues,
+  ListHandlerValues,
+} from "./types";
 
 export function atom<T>(value: T | ((args: T) => void)): AtomReturn<T> {
   const atomValue = reactive({
@@ -12,7 +15,7 @@ export function atom<T>(value: T | ((args: T) => void)): AtomReturn<T> {
   });
 
   return {
-    atom: atomValue as { value: T },
+    atom: atomValue as AtomValue<T>,
     subscribe(callback: (args: T) => void, immediate = false) {
       watch(
         () => this.atom.value,
@@ -24,36 +27,26 @@ export function atom<T>(value: T | ((args: T) => void)): AtomReturn<T> {
       );
     },
     handler: (payload?: T) => {
-      typeof value === "function" && (value as any)(payload);
+      typeof value === "function" && (value as AtomHandlerAction<T>)(payload);
     },
   };
 }
 
-export type OnlyAtomicValue<T extends AtomReturn<any>> = T["atom"]["value"];
-export type OnlyHandlerValue<T extends AtomReturn<any>> = T["handler"];
-
-export function useAtom<
-  T extends { [key in keyof T]: T[K] },
-  K extends keyof T
->(stores: T) {
+export function useAtom<T extends { [key in keyof T]: T[key] }>(stores: T) {
   const makeAtoms: Record<any, any> = Object.create({});
   for (const key in stores) {
-    const atom = (stores[key] as OnlyAtomicValue<any>).atom;
-    makeAtoms[key] = typeof atom.value === "object" ? atom.value : computed(() => atom.value);
+    const atom = (stores[key] as GetAtomValue<any>).atom;
+    makeAtoms[key] =
+      typeof atom.value === "object" ? atom.value : computed(() => atom.value);
   }
-  return makeAtoms as { [key in K]: OnlyAtomicValue<T[key]> };
+  return makeAtoms as ListAtomValues<T>;
 }
 
-export function useActions<
-  T extends { [key in keyof T]: T[K] },
-  K extends keyof T
->(actions: T) {
-
+export function useActions<T extends { [key in keyof T]: T[key] }>(actions: T) {
   const makeAtoms: Record<any, any> = Object.create({});
   for (const key in actions) {
-    makeAtoms[key] = (actions[key] as OnlyHandlerValue<any>).handler;
+    makeAtoms[key] = (actions[key] as GetHandlerValue<any>).handler;
   }
 
-  return makeAtoms as { [key in K]: OnlyHandlerValue<T[key]> };
-
+  return makeAtoms as ListHandlerValues<T>;
 }
