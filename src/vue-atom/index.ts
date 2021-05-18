@@ -30,9 +30,17 @@ export function atom<T extends any>(
         }
       );
     },
-    handler: (payload?: T) => {
-      typeof value === "function" &&
-        (value as AtomCoreHandlerAction<T>)(setAtom, getAtom, payload);
+    handler(payload?: T) {
+      if(typeof value === "function") {
+        const callback = (value as any)(setAtom, getAtom, payload);
+        if(!!callback && typeof callback.then === "function") {
+          const asyncHandler = async () => {
+            const response = await callback;
+            atomValue.value = response;
+          }
+          asyncHandler();
+        }
+      }
     },
   };
 }
